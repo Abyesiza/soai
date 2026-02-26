@@ -1,0 +1,80 @@
+# Self-Optimizing Agentic Interface (SOAI) Implementation Plan
+
+## Goal Description
+The purpose of this plan is to outline the architecture, necessary libraries, folder structure, and class-based design for the Self-Optimizing Agentic Interface (SOAI). The goal is to build an application that utilizes user interactions (sensors) to probabilistically calculate user intent and re-render the UI structure dynamically using "Superposition" (React, Framer Motion, and Jotai).
+
+## User Review Required
+> [!IMPORTANT]
+> Please review this implementation plan. Specifically, confirm if the class-based separation of concerns in the `lib/services/` directory aligns with your vision. Once approved, I can proceed with the execution phase based on this plan.
+
+## Proposed Technologies & Libraries
+To achieve a high-performance Agentic Generative UI, we will rely on the following tech stack:
+
+- **Framework:** Next.js 16 (App Router) — For React Server Components, Partial Prerendering, and Edge API Routes.
+- **Styling:** Tailwind CSS (`tailwindcss`, `tailwind-merge`, `clsx`) — For high-speed utility class styling and dynamic UI manipulation.
+- **Animations:** Framer Motion (`framer-motion`) — Essential for "Superposition" morphing using `layoutId`.
+- **State Management:** Jotai (`jotai`) — For high-frequency, atomic state updates (e.g., tracking the 0.0 - 1.0 probability vector).
+- **AI Integration:** Vercel AI SDK (`ai`, `@ai-sdk/google`) — For orchestration and Generative UI tool calling with Gemini 2.5 Flash.
+- **Database:** Supabase Client (`@supabase/supabase-js`) — For long-term user DNA persistence.
+- **UI Components:** Shadcn/UI (Radix UI primitives, `lucide-react`) — For standard atomic "Lego" blocks.
+
+## Folder Structure & Modularization
+
+The codebase will be modularized to separate React view components from the core logical engine. The core logic will rely heavily on classes to maintain state and provide clean interfaces.
+
+```text
+soai/
+├── app/                              # Next.js App Router
+│   ├── api/
+│   │   └── agent/
+│   │       └── route.ts              # Edge API route for Vercel AI SDK
+│   ├── globals.css                   # Global styles & Tailwind
+│   ├── layout.tsx                    # Root layout containing providers
+│   └── page.tsx                      # Main entry point with Superposition views
+├── components/                       # React Components
+│   ├── agentic/                      # Core SOAI visual components
+│   │   └── SuperpositionContainer.tsx # Orchestrates the predictive shadow DOM
+│   ├── sections/                     # Specific page sections
+│   │   └── hero/                     # Hero View Variations
+│   │       ├── HeroData.tsx          # Analytical persona view
+│   │       ├── HeroStory.tsx         # Storyteller persona view
+│   │       └── HeroDirect.tsx        # Transactional persona view
+│   └── ui/                           # Shadcn/UI atomic elements
+│       ├── button.tsx
+│       └── card.tsx
+├── hooks/                            # Custom React Hooks
+│   ├── useBehavioralSensor.ts        # Bridges SensorService to React lifecycles
+│   └── useIntent.ts                  # Bridges intentStore (Jotai) to components
+├── lib/
+│   ├── services/                     # 🧠 Class-based Core Logic
+│   │   ├── AIService.ts              # Class to handle Vercel AI SDK interactions
+│   │   ├── DatabaseService.ts        # Class to interact with Supabase vector store
+│   │   └── SensorService.ts          # Class to compute velocity, hover intent, & pathing
+│   ├── store/                        # Jotai State
+│   │   └── intentStore.ts            # Atomic definitions for probability, velocity, persona
+│   └── utils.ts                      # Tailwind and general utility functions
+└── types/                            # TypeScript Definitions
+    └── index.ts                      # Interfaces for Persona Vectors, Sensor Data, etc.
+```
+
+## Detailed Component Plans
+
+### 1. `lib/services/SensorService.ts`
+A class responsible for the math and physics behind user interaction.
+- **Responsibilities:** Takes raw coordinates (`clientX`, `clientY`) and timestamps, returning computed velocity and trajectory vectors.
+- **Why a Class?:** Better encapsulation of the mathematical formulas and recent positional history without clogging React components.
+
+### 2. `lib/services/AIService.ts`
+A class interfacing with the LLM.
+- **Responsibilities:** Takes the calculated intent vectors and prepares context prompts for Vercel AI SDK to stream UI variations or personalize content text.
+
+### 3. `components/agentic/SuperpositionContainer.tsx`
+The intelligent container that wraps around variation components.
+- Uses `AnimatePresence` and `motion.div` from Framer Motion.
+- Uses `layoutId` to morph between the `HeroStory` and `HeroData` states without jarring visual jumps.
+- Mounts non-active states with `opacity-0` and `pointer-events-none` for predictive Shadow DOM caching.
+
+## Verification Plan
+1. **Manual Verification**: Run the development server and verify standard layout loading.
+2. **Sensor Testing**: Simulate various mouse velocities and read the logs of the `SensorService` to verify correct persona assignments (e.g. erratic fast movement -> Analytical, slow scrolling -> Storyteller).
+3. **Superposition Testing**: Check if Framer Motion correctly morphs between variations with zero-latency visual swaps.
