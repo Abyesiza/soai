@@ -1,0 +1,22 @@
+{
+    "name": "soai",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@soai/core": "workspace:*",
+        "@soai/types": "workspace:*",
+        "@soai/math": "workspace:*",
+        "@soai/sensors": "workspace:*",
+        "@soai/intent": "workspace:*",
+        "@soai/personas": "workspace:*",
+        "@soai/agent-collaborative": "workspace:*",
+        "@soai/persist-local": "workspace:*"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    }
+}

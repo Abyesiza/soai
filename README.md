@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SOAI: Self-Optimizing Agentic Interface
 
-## Getting Started
+SOAI is a **behavioral intelligence runtime** — a pipeline that reads a user's digital body language (mouse velocity, scroll patterns, touch pressure, click frequency), computes a multi-dimensional intent vector, classifies the user into a persona, and automatically adapts the UI into the optimal experience.
 
-First, run the development server:
+## 🏗️ Architecture: The Microkernel
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+SOAI is built as a microkernel. The core (`@soai/core`) is a lightweight runtime that provides an event bus, a middleware pipeline, and a plugin system. Everything else — sensors, reasoning engines, agents, and persistence — are pluggable modules.
+
+### The Pipeline
+```
+Browser Events → Sensors → Signal Stream → Intent Engine → Persona Resolver → [Agents, UI Adapters, Persistence]
+                                              ↕ middleware pipeline ↕
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📦 Package Map
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Package | Layer | Description |
+|---|---|---|
+| [`@soai/core`](packages/core) | 0 | Event bus + Middleware + Plugin manager |
+| [`@soai/types`](packages/types) | 0 | Type-safe event contracts and shared interfaces |
+| [`@soai/math`](packages/math) | 1 | Rust/WASM optimized signal processing with TS fallback |
+| [`@soai/sensors`](packages/sensors) | 2 | 8+ browser sensors (Mouse, Scroll, Dwell, etc.) |
+| [`@soai/intent`](packages/intent) | 3 | Multi-dimensional intent vector computation |
+| [`@soai/personas`](packages/personas) | 3 | Persona classification with hysteresis |
+| [`@soai/agents`](packages/agents) | 4 | Agent protocol, arbitration, and composition |
+| [`@soai/react`](packages/react) | 7 | Framework bindings (Provider, AdaptiveContainer, Hooks) |
+| [`@soai/react-devtools`](packages/react-devtools) | 7 | Real-time inspector and vector visualizer |
+| [`@soai/cli`](packages/cli) | 8 | Project scaffolding and DX tooling |
+| [`soai`](packages/soai) | - | Meta-package: auto-configured default kernel |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Quickstart
 
-## Learn More
+Install the meta-package:
+```bash
+npm install soai
+```
 
-To learn more about Next.js, take a look at the following resources:
+Wrap your application in the `SoaiProvider`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+// app/layout.tsx
+import { SoaiProvider } from '@soai/react';
+import { soai } from 'soai';
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+export default function Layout({ children }) {
+  return (
+    <SoaiProvider instance={soai}>
+      {children}
+    </SoaiProvider>
+  );
+}
+```
 
-## Deploy on Vercel
+Implement an adaptive component:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+// app/page.tsx
+import { AdaptiveContainer } from '@soai/react';
+import { lazy } from 'react';
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+const AnalyticalView = lazy(() => import('./views/Analytical'));
+const StorytellerView = lazy(() => import('./views/Storyteller'));
+
+export default function Home() {
+  return (
+    <AdaptiveContainer
+      id="hero"
+      variants={{
+        analytical: AnalyticalView,
+        storyteller: StorytellerView,
+      }}
+    />
+  );
+}
+```
+
+## 🛠️ Development
+
+This is a monorepo managed by `pnpm` and `turbo`.
+
+### Build
+```bash
+pnpm build
+```
+
+### Run Demo
+```bash
+pnpm dev --filter demo
+```
+
+## 📜 License
+
+MIT

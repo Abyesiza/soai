@@ -1,8 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -11,31 +9,36 @@
 !.yarn/versions
 
 # testing
-/coverage
+coverage
 
-# next.js
-/.next/
-/out/
+# Next.js
+.next/
+out/
 
-# production
-/build
+# Monorepo / Turbo
+.turbo/
+dist/
+build/
+*.tsbuildinfo
+
+# Rust / WASM
+target/
+# Note: We commit the contents of packages/math/pkg to allow consumers 
+# to use the WASM without a Rust toolchain.
+# If you want to ignore it, uncomment:
+# pkg/
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# Environment
 .env*
-
-# vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
+# Frameworks
 next-env.d.ts

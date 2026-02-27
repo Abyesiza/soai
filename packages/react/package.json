@@ -1,0 +1,24 @@
+{
+    "name": "@soai/react",
+    "version": "0.1.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@soai/types": "workspace:*",
+        "@soai/core": "workspace:*"
+    },
+    "peerDependencies": {
+        "react": ">=18",
+        "react-dom": ">=18",
+        "jotai": ">=2",
+        "framer-motion": ">=10"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "@types/react": "^19",
+        "@types/react-dom": "^19"
+    }
+}
