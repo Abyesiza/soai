@@ -22,7 +22,13 @@ export function PersonalizedAgent() {
             const res = await fetch('/api/agent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ persona, velocity, probability })
+                body: JSON.stringify({
+                    persona,
+                    velocity,
+                    probability,
+                    hmm:     intent.hmm,
+                    metrics: intent.metrics,
+                })
             });
             const data = await res.json();
             if (data.context) {
